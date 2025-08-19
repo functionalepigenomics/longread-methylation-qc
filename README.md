@@ -4,5 +4,6 @@
 ### 🧐 About
 This repository provides QC code for long-read sequencing methylation data.
 
-                  <img width="288" height="765" alt="image" src="https://github.com/user-attachments/assets/2ad5211b-23e5-4f95-94fb-fcd88ade4618" />
-
+<p align="center">
+  <img width="288" height="765" alt="workflow figure" src="https://github.com/user-attachments/assets/2ad5211b-23e5-4f95-94fb-fcd88ade4618" />
+</p>

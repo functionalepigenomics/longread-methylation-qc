@@ -7,7 +7,8 @@ output="qc_promoter_methylation_summary.tsv"
 echo -e "File\tSum\tCount\tMedian\tBin1[0-20]\tBin2[20-40]\tBin3[40-60]\tBin4[60-80]\tBin5[80-100]" > "$output"
 
 for file in *.model.pbmm2.combined.bed.promoter.log; do
-  gawk -v fname="$file" '
+  cut -f1-4 "$file" | sort -u | \
+  gawk -v fname="$(basename "$file")" '
   {
     v = $4 + 0
     sum += v
@@ -21,15 +22,19 @@ for file in *.model.pbmm2.combined.bed.promoter.log; do
     else if (v >= 80 && v <= 100) bin5++
   }
   END {
+    if (count == 0) {
+      # output empty stats with zeros
+      printf("%s\t0\t0\tNA\t0\t0\t0\t0\t0\n", fname)
+      exit
+    }
     asort(values)
     if (count % 2 == 1) {
       median = values[int((count+1)/2)]
     } else {
       median = (values[int(count/2)] + values[int(count/2)+1]) / 2
     }
-        printf("%s\t%.0f\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\n", 
-       fname, sum, count, median,
-       bin1/count, bin2/count, bin3/count, bin4/count, bin5/count)
-  }
-  ' "$file" >> "$output"
-done
+    printf("%s\t%.0f\t%d\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\t%.4f\n",
+           fname, sum, count, median,
+           bin1/count, bin2/count, bin3/count, bin4/count, bin5/count)
+  }'
+done >> "$output"
